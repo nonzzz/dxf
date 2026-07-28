@@ -33,6 +33,15 @@ fn build_test_unit(b: *std.Build, step_test_unit: *std.Build.Step, options: stru
 
     parse_mod.addImport("tokenizer", tokenizer_mod);
 
+    const entities_mod = b.createModule(.{
+        .root_source_file = b.path("src/entities/lib.zig"),
+        .target = options.target,
+        .optimize = options.mode,
+    });
+
+    entities_mod.addImport("tokenizer", tokenizer_mod);
+    entities_mod.addImport("parse", parse_mod);
+
     const tokenizer_tests = b.addTest(.{
         .name = "test-tokenizer",
         .root_module = tokenizer_mod,
@@ -41,6 +50,11 @@ fn build_test_unit(b: *std.Build, step_test_unit: *std.Build.Step, options: stru
     const parse_tests = b.addTest(.{
         .name = "test-parse",
         .root_module = parse_mod,
+    });
+
+    const entities_tests = b.addTest(.{
+        .name = "test-entities",
+        .root_module = entities_mod,
     });
 
     const unit_tests = b.addTest(.{
@@ -53,12 +67,15 @@ fn build_test_unit(b: *std.Build, step_test_unit: *std.Build.Step, options: stru
     });
     unit_tests.root_module.addImport("tokenizer", tokenizer_mod);
     unit_tests.root_module.addImport("parse", parse_mod);
+    unit_tests.root_module.addImport("entities", entities_mod);
 
     const run_tokenizer_tests = b.addRunArtifact(tokenizer_tests);
     const run_parse_tests = b.addRunArtifact(parse_tests);
+    const run_entities_tests = b.addRunArtifact(entities_tests);
     const run_unit_tests = b.addRunArtifact(unit_tests);
 
     step_test_unit.dependOn(&run_tokenizer_tests.step);
     step_test_unit.dependOn(&run_parse_tests.step);
+    step_test_unit.dependOn(&run_entities_tests.step);
     step_test_unit.dependOn(&run_unit_tests.step);
 }
