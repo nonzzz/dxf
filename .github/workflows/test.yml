@@ -1,0 +1,13 @@
+name: test
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: mlugg/setup-zig@v2
+        with:
+          version: 0.16.0
+      - name: Zig build unit tests
+        run: zig build test:unit

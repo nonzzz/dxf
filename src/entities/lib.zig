@@ -4,6 +4,7 @@ pub const Circle = @import("./circle.zig");
 pub const Arc = @import("./arc.zig");
 pub const PolyLine = @import("./poly_line.zig");
 pub const Text = @import("./text.zig");
+pub const Point = @import("./point.zig");
 
 pub const Vec3 = common.Vec3;
 pub const Error = common.Error;
@@ -15,4 +16,5 @@ test {
     _ = Arc;
     _ = PolyLine;
     _ = Text;
+    _ = Point;
 }
