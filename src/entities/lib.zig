@@ -5,6 +5,9 @@ pub const Arc = @import("./arc.zig");
 pub const PolyLine = @import("./poly_line.zig");
 pub const Text = @import("./text.zig");
 pub const Point = @import("./point.zig");
+pub const Insert = @import("./insert.zig");
+pub const Attrib = @import("./attrib.zig");
+pub const AttDef = @import("./att_def.zig");
 
 pub const Vec3 = common.Vec3;
 pub const Error = common.Error;
@@ -17,4 +20,7 @@ test {
     _ = PolyLine;
     _ = Text;
     _ = Point;
+    _ = Insert;
+    _ = Attrib;
+    _ = AttDef;
 }

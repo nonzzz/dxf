@@ -56,6 +56,8 @@ pub const EntityKind = enum {
     text,
     mtext,
     insert,
+    attrib,
+    attdef,
     polyline,
     vertex,
     seqend,
@@ -79,6 +81,8 @@ pub const EntityKind = enum {
         if (std.mem.eql(u8, raw, "TEXT")) return .text;
         if (std.mem.eql(u8, raw, "MTEXT")) return .mtext;
         if (std.mem.eql(u8, raw, "INSERT")) return .insert;
+        if (std.mem.eql(u8, raw, "ATTRIB")) return .attrib;
+        if (std.mem.eql(u8, raw, "ATTDEF")) return .attdef;
         if (std.mem.eql(u8, raw, "POLYLINE")) return .polyline;
         if (std.mem.eql(u8, raw, "VERTEX")) return .vertex;
         if (std.mem.eql(u8, raw, "SEQEND")) return .seqend;
