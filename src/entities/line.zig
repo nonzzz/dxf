@@ -10,9 +10,7 @@ layer: ?[]const u8 = null,
 start: common.Vec3 = .{},
 end: common.Vec3 = .{},
 
-pub const Error = common.Error;
-
-pub fn read(parser: *parse.Parser, start: parse.EntityStart) Error!Line {
+pub fn read(parser: *parse.Parser, start: parse.EntityStart) common.ReadError!Line {
     var line: Line = .{ .loc = start.loc };
 
     while (try parser.next()) |event| {
@@ -26,7 +24,7 @@ pub fn read(parser: *parse.Parser, start: parse.EntityStart) Error!Line {
     return error.UnexpectedEof;
 }
 
-fn apply(self: *Line, token: tokenizer.Tokenizer.Token) Error!void {
+fn apply(self: *Line, token: tokenizer.Tokenizer.Token) common.ReadError!void {
     switch (token.code) {
         8 => self.layer = token.raw(),
         10 => self.start.x = try token.float(f64),

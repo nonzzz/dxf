@@ -12,9 +12,7 @@ thickness: f64 = 0,
 angle: f64 = 0,
 extrusion: common.Vec3 = .{ .z = 1 },
 
-pub const Error = common.Error;
-
-pub fn read(parser: *parse.Parser, start: parse.EntityStart) Error!Point {
+pub fn read(parser: *parse.Parser, start: parse.EntityStart) common.ReadError!Point {
     var point: Point = .{ .loc = start.loc };
 
     while (try parser.next()) |event| {
@@ -28,7 +26,7 @@ pub fn read(parser: *parse.Parser, start: parse.EntityStart) Error!Point {
     return error.UnexpectedEof;
 }
 
-fn apply(self: *Point, token: tokenizer.Tokenizer.Token) Error!void {
+fn apply(self: *Point, token: tokenizer.Tokenizer.Token) common.ReadError!void {
     switch (token.code) {
         8 => self.layer = token.raw(),
         10 => self.location.x = try token.float(f64),

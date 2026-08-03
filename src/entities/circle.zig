@@ -10,9 +10,7 @@ layer: ?[]const u8 = null,
 center: common.Vec3 = .{},
 radius: f64 = 0,
 
-pub const Error = common.Error;
-
-pub fn read(parser: *parse.Parser, start: parse.EntityStart) Error!Circle {
+pub fn read(parser: *parse.Parser, start: parse.EntityStart) common.ReadError!Circle {
     var circle: Circle = .{ .loc = start.loc };
 
     while (try parser.next()) |event| {
@@ -26,7 +24,7 @@ pub fn read(parser: *parse.Parser, start: parse.EntityStart) Error!Circle {
     return error.UnexpectedEof;
 }
 
-fn apply(self: *Circle, token: tokenizer.Tokenizer.Token) Error!void {
+fn apply(self: *Circle, token: tokenizer.Tokenizer.Token) common.ReadError!void {
     switch (token.code) {
         8 => self.layer = token.raw(),
         10 => self.center.x = try token.float(f64),

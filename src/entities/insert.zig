@@ -19,22 +19,9 @@ column_spacing: f64 = 0,
 row_spacing: f64 = 0,
 extrusion: common.Vec3 = .{ .z = 1 },
 
-pub const Error = common.Error;
+pub const AttribSink = common.Sink(Attrib, common.ReadError);
 
-pub const AttribSink = struct {
-    ptr: *anyopaque,
-    vtable: *const VTable,
-
-    pub const VTable = struct {
-        emit: *const fn (*anyopaque, Attrib) Error!void,
-    };
-
-    pub fn emit(self: AttribSink, attrib: Attrib) Error!void {
-        return self.vtable.emit(self.ptr, attrib);
-    }
-};
-
-pub fn read(parser: *parse.Parser, start: parse.EntityStart, sink: ?AttribSink) Error!Insert {
+pub fn read(parser: *parse.Parser, start: parse.EntityStart, sink: ?AttribSink) common.ReadError!Insert {
     var insert: Insert = .{ .loc = start.loc };
 
     while (try parser.next()) |event| {
@@ -67,7 +54,7 @@ pub fn read(parser: *parse.Parser, start: parse.EntityStart, sink: ?AttribSink) 
     return error.UnexpectedEof;
 }
 
-fn apply(self: *Insert, token: tokenizer.Tokenizer.Token) Error!void {
+fn apply(self: *Insert, token: tokenizer.Tokenizer.Token) common.ReadError!void {
     switch (token.code) {
         2 => self.block_name = token.raw(),
         8 => self.layer = token.raw(),
@@ -103,7 +90,7 @@ const TestAttribSink = struct {
         };
     }
 
-    fn emit(ptr: *anyopaque, attrib: Attrib) Error!void {
+    fn emit(ptr: *anyopaque, attrib: Attrib) common.ReadError!void {
         const self: *@This() = @ptrCast(@alignCast(ptr));
         self.items[self.len] = attrib;
         self.len += 1;

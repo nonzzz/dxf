@@ -24,9 +24,7 @@ field_length: i16 = 0,
 vertical_justification: i16 = 0,
 extrusion: common.Vec3 = .{ .z = 1 },
 
-pub const Error = common.Error;
-
-pub fn read(parser: *parse.Parser, start: parse.EntityStart) Error!AttDef {
+pub fn read(parser: *parse.Parser, start: parse.EntityStart) common.ReadError!AttDef {
     var attdef: AttDef = .{ .loc = start.loc };
 
     while (try parser.next()) |event| {
@@ -40,7 +38,7 @@ pub fn read(parser: *parse.Parser, start: parse.EntityStart) Error!AttDef {
     return error.UnexpectedEof;
 }
 
-fn apply(self: *AttDef, token: tokenizer.Tokenizer.Token) Error!void {
+fn apply(self: *AttDef, token: tokenizer.Tokenizer.Token) common.ReadError!void {
     switch (token.code) {
         1 => self.default_value = token.raw(),
         2 => self.tag = token.raw(),

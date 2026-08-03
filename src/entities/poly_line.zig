@@ -17,22 +17,9 @@ pub const Vertex = struct {
     flags: i16 = 0,
 };
 
-pub const VertexSink = struct {
-    ptr: *anyopaque,
-    vtable: *const VTable,
+pub const VertexSink = common.Sink(Vertex, common.ReadError);
 
-    pub const VTable = struct {
-        emit: *const fn (*anyopaque, Vertex) Error!void,
-    };
-
-    pub fn emit(self: VertexSink, vertex: Vertex) Error!void {
-        return self.vtable.emit(self.ptr, vertex);
-    }
-};
-
-pub const Error = common.Error;
-
-pub fn read(parser: *parse.Parser, start: parse.EntityStart, sink: ?VertexSink) Error!PolyLine {
+pub fn read(parser: *parse.Parser, start: parse.EntityStart, sink: ?VertexSink) common.ReadError!PolyLine {
     var polyline: PolyLine = .{ .loc = start.loc };
 
     while (try parser.next()) |event| {
@@ -63,7 +50,7 @@ pub fn read(parser: *parse.Parser, start: parse.EntityStart, sink: ?VertexSink) 
     return error.UnexpectedEof;
 }
 
-fn apply(self: *PolyLine, token: tokenizer.Tokenizer.Token) Error!void {
+fn apply(self: *PolyLine, token: tokenizer.Tokenizer.Token) common.ReadError!void {
     switch (token.code) {
         8 => self.layer = token.raw(),
         70 => {
@@ -74,7 +61,7 @@ fn apply(self: *PolyLine, token: tokenizer.Tokenizer.Token) Error!void {
     }
 }
 
-fn read_vertex(parser: *parse.Parser, start: parse.EntityStart) Error!Vertex {
+fn read_vertex(parser: *parse.Parser, start: parse.EntityStart) common.ReadError!Vertex {
     var vertex: Vertex = .{ .loc = start.loc };
 
     while (try parser.next()) |event| {
@@ -88,7 +75,7 @@ fn read_vertex(parser: *parse.Parser, start: parse.EntityStart) Error!Vertex {
     return error.UnexpectedEof;
 }
 
-fn apply_vertex(vertex: *Vertex, token: tokenizer.Tokenizer.Token) Error!void {
+fn apply_vertex(vertex: *Vertex, token: tokenizer.Tokenizer.Token) common.ReadError!void {
     switch (token.code) {
         8 => vertex.layer = token.raw(),
         10 => vertex.point.x = try token.float(f64),
@@ -112,7 +99,7 @@ const TestVertexSink = struct {
         };
     }
 
-    fn emit(ptr: *anyopaque, vertex: Vertex) Error!void {
+    fn emit(ptr: *anyopaque, vertex: Vertex) common.ReadError!void {
         const self: *@This() = @ptrCast(@alignCast(ptr));
         self.items[self.len] = vertex;
         self.len += 1;

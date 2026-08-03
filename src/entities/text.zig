@@ -20,9 +20,7 @@ horizontal_justification: i16 = 0,
 vertical_justification: i16 = 0,
 extrusion: common.Vec3 = .{ .z = 1 },
 
-pub const Error = common.Error;
-
-pub fn read(parser: *parse.Parser, start: parse.EntityStart) Error!Text {
+pub fn read(parser: *parse.Parser, start: parse.EntityStart) common.ReadError!Text {
     var text: Text = .{ .loc = start.loc };
 
     while (try parser.next()) |event| {
@@ -36,7 +34,7 @@ pub fn read(parser: *parse.Parser, start: parse.EntityStart) Error!Text {
     return error.UnexpectedEof;
 }
 
-fn apply(self: *Text, token: tokenizer.Tokenizer.Token) Error!void {
+fn apply(self: *Text, token: tokenizer.Tokenizer.Token) common.ReadError!void {
     switch (token.code) {
         1 => self.value = token.raw(),
         7 => self.style = token.raw(),
